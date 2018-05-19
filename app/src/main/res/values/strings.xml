@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Wakeful</string>
+    <string name="default_label">保持唤醒</string>
+
 </resources>
