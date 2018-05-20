@@ -1,7 +1,9 @@
 package com.gedoor.wakeful;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.service.quicksettings.TileService;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class WakefulTileService extends TileService {
@@ -76,6 +79,7 @@ public class WakefulTileService extends TileService {
         super.onClick();
         Log.d(TAG, "onClick");
         if (!Settings.System.canWrite(this)) {
+            collapseStatusBar(this);
             Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
             intent.setData(Uri.parse("package:" + this.getPackageName()));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -164,4 +168,16 @@ public class WakefulTileService extends TileService {
         startForeground(NOTIFICATION_ID, notification);
     }
 
+    private void collapseStatusBar(Context context) {
+        try {
+            @SuppressLint("WrongConstant")
+            Object service = context.getSystemService ("statusbar");
+            Class <?> statusBarManager = Class.forName("android.app.StatusBarManager");
+            Method expand = statusBarManager.getMethod("collapsePanels");
+            expand.invoke(service);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
