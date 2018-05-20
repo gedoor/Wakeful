@@ -7,12 +7,14 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-public class MyApplication extends Application {
+public class MApplication extends Application {
     public final static String CHANNEL_WAKEFUL = "channel_wakeful";
+    private static MApplication instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannelIdWakeful();
         }
@@ -33,5 +35,9 @@ public class MyApplication extends Application {
         if (notificationManager != null) {
             notificationManager.createNotificationChannel(firstChannel);
         }
+    }
+
+    public static MApplication getInstance() {
+        return instance;
     }
 }

@@ -157,7 +157,7 @@ public class WakefulTileService extends TileService {
     }
 
     private void upNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MyApplication.CHANNEL_WAKEFUL)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.CHANNEL_WAKEFUL)
                 .setSmallIcon(R.drawable.ic_whatshot_24dp)
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.default_label))
