@@ -6,8 +6,8 @@ android {
         applicationId "com.gedoor.wakeful"
         minSdkVersion 24
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

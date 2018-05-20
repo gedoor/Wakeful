@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Wakeful</string>
     <string name="default_label">保持唤醒</string>
-
+    <string name="active_label" >%d分钟</string>
+    <string name="wake_time">亮屏时间</string>
+    <string name="notification_content">屏幕将保持唤醒%d分钟(点击关闭)</string>
 </resources>
