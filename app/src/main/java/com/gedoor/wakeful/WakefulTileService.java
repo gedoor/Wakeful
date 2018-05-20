@@ -50,8 +50,6 @@ public class WakefulTileService extends TileService {
     public void onTileAdded() {
         super.onTileAdded();
         Log.d(TAG, "onTileAdded");
-        getQsTile().setState(tileState);
-        getQsTile().updateTile();
     }
 
     @Override
@@ -95,7 +93,6 @@ public class WakefulTileService extends TileService {
                     break;
                 default:
                     wakeTime = 0;
-
             }
             if (wakeTime != 0) {
                 tileActive();

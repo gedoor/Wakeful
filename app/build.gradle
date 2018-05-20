@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def name = "Wakeful"
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -14,6 +16,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "${name}_${defaultConfig.versionName}.apk"
+            }
         }
     }
 }
