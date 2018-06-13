@@ -98,6 +98,9 @@ public class WakefulTileService extends TileService {
                 default:
                     wakeTime = 0;
             }
+            if (isLocked()) {
+                wakeTime = 0;
+            }
             if (wakeTime != 0) {
                 tileActive();
             } else {
