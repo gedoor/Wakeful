@@ -2,8 +2,34 @@ apply plugin: 'com.android.application'
 
 def name = "Wakeful"
 
+def keystorePSW = ''
+def keystoreAlias = ''
+def keystoreAliasPSW = ''
+// default keystore file, PLZ config file path in local.properties
+def keyFile = file('s.keystore.temp')
+
+Properties properties = new Properties()
+// local.properties file in the root director
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def keystoreFilepath = properties.getProperty("keystore.path")
+
+if (keystoreFilepath) {
+    keystorePSW = properties.getProperty("keystore.password")
+    keystoreAlias = properties.getProperty("keystore.alias")
+    keystoreAliasPSW = properties.getProperty("keystore.alias_password")
+    keyFile = file(keystoreFilepath)
+}
+
 android {
     compileSdkVersion 27
+    signingConfigs {
+        myConfig {
+            storeFile keyFile
+            storePassword keystorePSW
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPSW
+        }
+    }
     defaultConfig {
         applicationId "com.gedoor.wakeful"
         minSdkVersion 24
@@ -16,6 +42,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.myConfig
         }
         android.applicationVariants.all { variant ->
             variant.outputs.all {

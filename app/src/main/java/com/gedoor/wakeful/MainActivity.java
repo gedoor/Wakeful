@@ -1,20 +1,24 @@
 package com.gedoor.wakeful;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.PowerManager;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -33,12 +37,19 @@ public class MainActivity extends AppCompatActivity {
     CardView vwQqRwm;
     @BindView(R.id.vw_zfb_hb_kl)
     CardView vwZfbHbKl;
+    @BindView(R.id.llDefaultWakefulTime)
+    LinearLayout llDefaultWakefulTime;
+    @BindView(R.id.tvDefaultWakefulTime)
+    TextView tvDefaultWakefulTime;
+
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
         initData();
         ignoreBatteryOptimization();
     }
@@ -84,6 +95,22 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "打开支付宝失败,请手动打开支付宝", Toast.LENGTH_SHORT).show();
             }
         });
+        setTimeView(preferences.getInt("defaultWakefulTime", 1));
+        llDefaultWakefulTime.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("选择默认亮屏时间");
+            builder.setItems(getResources().getStringArray(R.array.timeShow), (dialogInterface, i) -> {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("defaultWakefulTime", i);
+                editor.apply();
+                setTimeView(i);
+            });
+            builder.show();
+        });
+    }
+
+    private void setTimeView(int defaultWakefulTime) {
+        tvDefaultWakefulTime.setText(getResources().getStringArray(R.array.timeShow)[defaultWakefulTime]);
     }
 
     private void openIntent(String intentName, String address) {
@@ -101,11 +128,14 @@ public class MainActivity extends AppCompatActivity {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
 
-        boolean hasIgnored = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        boolean hasIgnored = false;
+        if (powerManager != null) {
+            hasIgnored = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        }
         //  判断当前APP是否有加入电池优化的白名单，如果没有，弹出加入电池优化的白名单的设置对话框。
         if(!hasIgnored) {
             try {
-                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
             } catch (Exception e) {

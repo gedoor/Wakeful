@@ -8,4 +8,5 @@
 
     <string name="can_not_open">无法打开</string>
     <string name="copy_complete">已拷贝</string>
+    <string name="default_wakeful_time">默认亮屏时间</string>
 </resources>

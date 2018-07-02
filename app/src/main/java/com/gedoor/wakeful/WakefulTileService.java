@@ -6,7 +6,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
@@ -18,13 +20,12 @@ import java.util.Objects;
 
 public class WakefulTileService extends TileService {
     private final String TAG = "WakefulTileService";
-    private final int NOTIFICATION_ID = 101;
     private final String RELEASE = "release";
 
     private int tileState = Tile.STATE_INACTIVE;
-    private int wakeTimeDefault = 60*1000;
     private int wakeTime;
 
+    private SharedPreferences preferences;
     private WakefulBroadcastReceiver wakefulBroadcastReceiver = new WakefulBroadcastReceiver(this);
     private IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
     private boolean registerReceiver;
@@ -32,6 +33,7 @@ public class WakefulTileService extends TileService {
     @Override
     public void onCreate() {
         super.onCreate();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -150,6 +152,7 @@ public class WakefulTileService extends TileService {
         if (wakeTime != 0) {
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, wakeTime * 60 * 1000);
         } else {
+            int wakeTimeDefault = getResources().getIntArray(R.array.time)[preferences.getInt("defaultWakefulTime", 1)] * 1000;
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, wakeTimeDefault);
         }
     }
@@ -168,6 +171,7 @@ public class WakefulTileService extends TileService {
                 .setContentText(String.format(getString(R.string.notification_content), wakeTime))
                 .setContentIntent(getThisServicePendingIntent(RELEASE));
         Notification notification = builder.build();
+        int NOTIFICATION_ID = 101;
         startForeground(NOTIFICATION_ID, notification);
     }
 
