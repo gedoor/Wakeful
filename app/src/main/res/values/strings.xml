@@ -7,4 +7,5 @@
     <string name="launcher_icon">显示/隐藏启动图标</string>
 
     <string name="can_not_open">无法打开</string>
+    <string name="copy_complete">已拷贝</string>
 </resources>
