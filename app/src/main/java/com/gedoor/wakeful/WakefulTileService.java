@@ -123,16 +123,16 @@ public class WakefulTileService extends TileService {
     }
 
     public void tileRelease() {
-        if (registerReceiver) {
-            registerReceiver = false;
-            unregisterReceiver(wakefulBroadcastReceiver);
-        }
         wakeTime = 0;
+        upScreenOffTimeout();
         tileState = Tile.STATE_INACTIVE;
         upTile();
         stopForeground(true);
         stopSelf();
-        upScreenOffTimeout();
+        if (registerReceiver) {
+            registerReceiver = false;
+            unregisterReceiver(wakefulBroadcastReceiver);
+        }
     }
 
     private void upTile() {
@@ -179,6 +179,7 @@ public class WakefulTileService extends TileService {
         try {
             @SuppressLint("WrongConstant")
             Object service = context.getSystemService ("statusbar");
+            @SuppressLint("PrivateApi")
             Class <?> statusBarManager = Class.forName("android.app.StatusBarManager");
             Method expand = statusBarManager.getMethod("collapsePanels");
             expand.invoke(service);
